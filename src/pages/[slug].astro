@@ -1,0 +1,40 @@
+---
+import Card from "../components/Card.astro";
+import Layout from "../layouts/Layout.astro";
+
+export async function getStaticPaths() {
+  const posts = await Astro.glob("../posts/*.md");
+
+  return posts.map((post) => ({
+    params: {
+      slug: post.frontmatter.slug,
+    },
+    props: {
+      post,
+    },
+  }));
+}
+
+const post = Astro.props.post;
+const { Content, frontmatter } = Astro.props.post;
+console.log(Astro.props.post); // check the terminal for the results. doesn't show in the JS console
+---
+
+<Layout title={frontmatter.title}>
+  <section class="page-content">
+    <div class="container">
+      <Card>
+        <a href="/blog" class="btn">Go back</a>
+        <h2>{frontmatter.title}</h2>
+        <div>
+          Written by <strong>{frontmatter.author}</strong> on {new Date(frontmatter.date).toLocaleDateString()}
+        </div>
+        <Content />
+      </Card>
+    </div>
+  </section>
+</Layout>
+
+<script define:vars={{ post, frontmatter }}>
+  console.log(post);
+</script>
